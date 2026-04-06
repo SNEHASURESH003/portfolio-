@@ -380,57 +380,48 @@ nav {
 }
 
 /* PROJECTS */
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-}
-
+.projects-featured { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem; }
+.projects-small { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
 .proj-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  padding: 1.8rem;
-  position: relative;
-  transition: all 0.25s;
-  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
-  display: flex;
-  flex-direction: column;
+  background:var(--card); border:1px solid var(--border);
+  padding:1.8rem; position:relative; transition:all 0.25s;
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);
 }
 .proj-card:hover {
-  border-color: var(--border-hot);
-  background: rgba(0,245,255,0.05);
-  transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(0,245,255,0.08);
+  border-color:var(--border-hot);
+  background:rgba(0,245,255,0.05);
+  transform:translateY(-4px);
+  box-shadow:0 16px 40px rgba(0,245,255,0.08);
 }
-.proj-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: auto;
-  padding-top: 1rem;
+.proj-card.featured {
+  clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,0 100%);
 }
 .proj-corner {
-  position: absolute;
-  top: 1rem; right: 1rem;
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 0.55rem;
-  color: var(--yellow);
-  letter-spacing: 0.15em;
-  border: 1px solid rgba(255,230,0,0.3);
-  padding: 0.15rem 0.5rem;
+  position:absolute; top:1rem; right:1.5rem;
+  font-family:'Share Tech Mono',monospace; font-size:0.58rem;
+  color:var(--yellow); letter-spacing:0.15em;
+  border:1px solid rgba(255,230,0,0.3); padding:0.15rem 0.5rem;
 }
-.proj-corner.college {
-  color: var(--pink);
-  border-color: rgba(255,0,102,0.3);
+.proj-idx {
+  font-family:'Orbitron',monospace; font-size:0.65rem;
+  color:rgba(0,245,255,0.3); margin-bottom:0.8rem;
 }
-.proj-corner.mini {
-  color: var(--green);
-  border-color: rgba(0,255,136,0.3);
+.proj-title {
+  font-family:'Orbitron',monospace; font-size:1.1rem; font-weight:700;
+  color:var(--white); margin-bottom:0.8rem; letter-spacing:0.03em;
 }
-
-@media(max-width:900px){
-  .projects-grid { grid-template-columns: 1fr; }
+.proj-title.sm { font-size:0.95rem; }
+.proj-desc { font-size:0.9rem; color:rgba(232,244,255,0.55); line-height:1.65; margin-bottom:1.2rem; font-weight:300; }
+.proj-desc.sm { font-size:0.85rem; }
+.proj-tags { display:flex; flex-wrap:wrap; gap:0.5rem; }
+.ptag {
+  font-family:'Share Tech Mono',monospace; font-size:0.6rem;
+  padding:0.2rem 0.6rem; letter-spacing:0.1em;
 }
+.ptag-cyan { border:1px solid rgba(0,245,255,0.3); color:var(--cyan); }
+.ptag-pink { border:1px solid rgba(255,0,102,0.3); color:var(--pink); }
+.ptag-green { border:1px solid rgba(0,255,136,0.3); color:var(--green); }
+.ptag-yellow { border:1px solid rgba(255,230,0,0.3); color:var(--yellow); }
 
 /* CERTIFICATIONS */
 .cert-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
