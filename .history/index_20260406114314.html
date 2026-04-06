@@ -67,10 +67,7 @@ nav {
   color:var(--cyan); letter-spacing:0.2em; text-shadow:var(--glow-cyan);
 }
 .nav-logo span { color:var(--pink); text-shadow:var(--glow-pink); }
-
-.nav-links {
-  display:flex; gap:2rem; list-style:none;
-}
+.nav-links { display:flex; gap:2rem; list-style:none; }
 .nav-links a {
   font-family:'Share Tech Mono',monospace; font-size:0.72rem;
   color:var(--muted); text-decoration:none; letter-spacing:0.12em;
@@ -82,58 +79,9 @@ nav {
 }
 .nav-links a:hover { color:var(--cyan); text-shadow:var(--glow-cyan); }
 .nav-links a:hover::after { transform:scaleX(1); }
-
-.nav-right {
-  display:flex; align-items:center; gap:1rem;
-}
 .nav-status {
   display:flex; align-items:center; gap:0.5rem;
   font-family:'Share Tech Mono',monospace; font-size:0.68rem; color:var(--green);
-}
-.status-dot {
-  width:7px; height:7px; border-radius:50%;
-  background:var(--green); box-shadow:var(--glow-green);
-  animation:pulse-dot 2s ease-in-out infinite;
-}
-@keyframes pulse-dot {
-  0%,100%{opacity:1;transform:scale(1);}
-  50%{opacity:0.4;transform:scale(0.7);}
-}
-
-.hamburger {
-  display:none; flex-direction:column; gap:5px;
-  background:none; border:none; padding:4px;
-}
-.hamburger span {
-  display:block; width:22px; height:2px;
-  background:var(--cyan); transition:all 0.3s;
-}
-.hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
-.hamburger.open span:nth-child(2) { opacity:0; }
-.hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
-
-@media(max-width:900px){
-  nav { padding:0.8rem 1.5rem; }
-
-  .nav-links {
-    display:none;
-    position:fixed;
-    top:56px; left:0; right:0;
-    background:rgba(2,4,9,0.97);
-    backdrop-filter:blur(12px);
-    flex-direction:column;
-    gap:0;
-    border-bottom:1px solid var(--border);
-    z-index:499;
-    list-style:none;
-  }
-  .nav-links.open { display:flex; }
-  .nav-links li { border-bottom:1px solid var(--border); }
-  .nav-links a {
-    display:block; padding:1rem 1.5rem; font-size:0.85rem;
-  }
-  .hamburger { display:flex; }
-  .hero-id-card, .hero-stats-col { display:none; }
 }
 .status-dot {
   width:7px; height:7px; border-radius:50%;
@@ -496,22 +444,17 @@ footer {
 <!-- NAV -->
 <nav>
   <div class="nav-logo">SNEHA<span>.</span>SURESH</div>
-  <ul class="nav-links" id="nav-links">
-    <li><a href="#hero" onclick="closeMenu()">Home</a></li>
-    <li><a href="#obj-section" onclick="closeMenu()">About</a></li>
-    <li><a href="#skills-section" onclick="closeMenu()">Skills</a></li>
-    <li><a href="#exp-section" onclick="closeMenu()">Experience</a></li>
-    <li><a href="#edu-section" onclick="closeMenu()">Education</a></li>
-    <li><a href="#projects-section" onclick="closeMenu()">Projects</a></li>
-    <li><a href="#cert-section" onclick="closeMenu()">Certifications</a></li>
-    <li><a href="#contact-section" onclick="closeMenu()">Contact</a></li>
+  <ul class="nav-links">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#obj-section">About</a></li>
+    <li><a href="#skills-section">Skills</a></li>
+    <li><a href="#exp-section">Experience</a></li>
+    <li><a href="#edu-section">Education</a></li>
+    <li><a href="#projects-section">Projects</a></li>
+    <li><a href="#cert-section">Certifications</a></li>
+    <li><a href="#contact-section">Contact</a></li>
   </ul>
-  <div class="nav-right">
-    <div class="nav-status"><div class="status-dot"></div>OPEN TO WORK</div>
-    <button class="hamburger" id="hamburger" onclick="toggleMenu()">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
+  <div class="nav-status"><div class="status-dot"></div>OPEN TO WORK</div>
 </nav>
 
 <!-- HERO -->
@@ -953,16 +896,6 @@ function type(){
   setTimeout(type,del?35:55);
 }
 setTimeout(type,800);
-function toggleMenu() {
-  const menu = document.getElementById('nav-links');
-  const btn = document.getElementById('hamburger');
-  menu.classList.toggle('open');
-  btn.classList.toggle('open');
-}
-function closeMenu() {
-  document.getElementById('nav-links').classList.remove('open');
-  document.getElementById('hamburger').classList.remove('open');
-}
 </script>
 </body>
 </html>
