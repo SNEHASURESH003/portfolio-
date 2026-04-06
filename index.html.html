@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sneha Suresh — Python Full Stack Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #020409;
+  --bg2: #050a12;
+  --cyan: #00f5ff;
+  --pink: #ff0066;
+  --green: #00ff88;
+  --yellow: #ffe600;
+  --white: #e8f4ff;
+  --muted: #4a6a7a;
+  --card: rgba(0,245,255,0.03);
+  --border: rgba(0,245,255,0.15);
+  --border-hot: rgba(0,245,255,0.5);
+  --glow-cyan: 0 0 20px rgba(0,245,255,0.4), 0 0 60px rgba(0,245,255,0.1);
+  --glow-pink: 0 0 20px rgba(255,0,102,0.5), 0 0 60px rgba(255,0,102,0.15);
+  --glow-green: 0 0 20px rgba(0,255,136,0.4);
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 2px; }
+* { cursor: none !important; }
+#cursor {
+  position: fixed; width: 12px; height: 12px;
+  background: var(--cyan); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.1s, background 0.2s;
+  box-shadow: var(--glow-cyan); mix-blend-mode: screen;
+}
+#cursor-ring {
+  position: fixed; width: 36px; height: 36px;
+  border: 1px solid rgba(0,245,255,0.4); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: transform 0.15s ease-out, width 0.2s, height 0.2s;
+}
+body {
+  background: var(--bg); color: var(--white);
+  font-family: 'Rajdhani', sans-serif; font-size: 16px; overflow-x: hidden;
+}
+body::after {
+  content: ''; position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.05) 2px,rgba(0,0,0,0.05) 4px);
+  pointer-events: none; z-index: 9990;
+}
+#bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.6; }
+
+/* NAV */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:500;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:1rem 3rem;
+  background:rgba(2,4,9,0.92); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo {
+  font-family:'Orbitron',monospace; font-size:0.75rem; font-weight:900;
+  color:var(--cyan); letter-spacing:0.2em; text-shadow:var(--glow-cyan);
+}
+.nav-logo span { color:var(--pink); text-shadow:var(--glow-pink); }
+.nav-links { display:flex; gap:2rem; list-style:none; }
+.nav-links a {
+  font-family:'Share Tech Mono',monospace; font-size:0.72rem;
+  color:var(--muted); text-decoration:none; letter-spacing:0.12em;
+  text-transform:uppercase; transition:color 0.2s, text-shadow 0.2s; position:relative;
+}
+.nav-links a::after {
+  content:''; position:absolute; bottom:-4px; left:0; right:0;
+  height:1px; background:var(--cyan); transform:scaleX(0); transition:transform 0.2s;
+}
+.nav-links a:hover { color:var(--cyan); text-shadow:var(--glow-cyan); }
+.nav-links a:hover::after { transform:scaleX(1); }
+.nav-status {
+  display:flex; align-items:center; gap:0.5rem;
+  font-family:'Share Tech Mono',monospace; font-size:0.68rem; color:var(--green);
+}
+.status-dot {
+  width:7px; height:7px; border-radius:50%;
+  background:var(--green); box-shadow:var(--glow-green);
+  animation:pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100%{opacity:1;transform:scale(1);}
+  50%{opacity:0.4;transform:scale(0.7);}
+}
+
+/* HERO */
+#hero {
+  position:relative; min-height:100vh; display:flex;
+  align-items:center; padding:7rem 3rem 3rem; z-index:1;
+}
+.hero-grid {
+  display:grid; grid-template-columns:1fr auto auto;
+  gap:4rem; align-items:center;
+  width:100%; max-width:1300px; margin:0 auto;
+}
+.hero-sys-text {
+  font-family:'Share Tech Mono',monospace; font-size:0.7rem;
+  color:var(--green); letter-spacing:0.1em; margin-bottom:1.5rem;
+  opacity:0; animation:fadeIn 0.5s 0.3s forwards;
+}
+.hero-sys-text::before { content:'> '; color:var(--cyan); }
+.glitch-name {
+  font-family:'Orbitron',monospace;
+  font-size:clamp(2.8rem,7vw,6rem); font-weight:900;
+  line-height:0.9; letter-spacing:-0.01em; color:var(--white);
+  position:relative; margin-bottom:0.5rem;
+  opacity:0; animation:fadeIn 0.6s 0.5s forwards;
+}
+.glitch-name::before,.glitch-name::after {
+  content:attr(data-text); position:absolute; inset:0;
+  font-family:'Orbitron',monospace;
+}
+.glitch-name::before { color:var(--cyan); animation:glitch1 4s infinite; clip-path:polygon(0 20%,100% 20%,100% 40%,0 40%); }
+.glitch-name::after { color:var(--pink); animation:glitch2 4s infinite; clip-path:polygon(0 60%,100% 60%,100% 75%,0 75%); }
+@keyframes glitch1 {
+  0%,90%,100%{transform:translate(0);opacity:0;}
+  91%{transform:translate(-3px,1px);opacity:1;}
+  93%{transform:translate(3px,-1px);opacity:1;}
+  95%{transform:translate(0);opacity:0;}
+}
+@keyframes glitch2 {
+  0%,92%,100%{transform:translate(0);opacity:0;}
+  93%{transform:translate(3px,2px);opacity:1;}
+  95%{transform:translate(-3px,-1px);opacity:1;}
+  97%{transform:translate(0);opacity:0;}
+}
+.hero-sub {
+  font-family:'Share Tech Mono',monospace;
+  font-size:clamp(0.8rem,2vw,1rem); color:var(--cyan);
+  letter-spacing:0.2em; text-transform:uppercase; margin-bottom:2rem;
+  opacity:0; animation:fadeIn 0.6s 0.7s forwards; text-shadow:var(--glow-cyan);
+}
+.hero-desc {
+  font-size:1rem; color:rgba(232,244,255,0.6);
+  max-width:520px; line-height:1.75; margin-bottom:2.5rem;
+  opacity:0; animation:fadeIn 0.6s 0.9s forwards; font-weight:300;
+}
+.hero-btns {
+  display:flex; gap:1rem; flex-wrap:wrap;
+  opacity:0; animation:fadeIn 0.6s 1.1s forwards;
+}
+.btn-cyber {
+  position:relative; display:inline-flex; align-items:center; gap:0.6rem;
+  padding:0.85rem 2rem;
+  font-family:'Orbitron',monospace; font-size:0.72rem; font-weight:700;
+  letter-spacing:0.15em; text-transform:uppercase; text-decoration:none;
+  transition:all 0.2s;
+  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));
+}
+.btn-cyber-primary { background:var(--cyan); color:var(--bg); box-shadow:var(--glow-cyan); }
+.btn-cyber-primary:hover { background:white; box-shadow:0 0 40px rgba(0,245,255,0.8); transform:translateY(-2px); }
+.btn-cyber-ghost { background:transparent; color:var(--cyan); border:1px solid var(--cyan); }
+.btn-cyber-ghost:hover { background:rgba(0,245,255,0.08); box-shadow:var(--glow-cyan); transform:translateY(-2px); }
+
+/* ID CARD */
+.hero-id-card {
+  background:var(--card); border:1px solid var(--border);
+  padding:2rem; width:260px; position:relative;
+  opacity:0; animation:fadeIn 0.8s 1.3s forwards;
+  clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px));
+}
+.hero-id-card::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg,rgba(0,245,255,0.05) 0%,transparent 60%);
+  pointer-events:none;
+}
+.id-header {
+  font-family:'Share Tech Mono',monospace; font-size:0.6rem;
+  color:var(--muted); letter-spacing:0.15em; text-transform:uppercase;
+  margin-bottom:1.2rem; padding-bottom:0.8rem; border-bottom:1px solid var(--border);
+}
+.id-avatar {
+  width:70px; height:70px; border-radius:50%;
+  background:linear-gradient(135deg,var(--cyan) 0%,var(--pink) 100%);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Orbitron',monospace; font-size:1.5rem; font-weight:900;
+  color:var(--bg); margin:0 auto 1rem; box-shadow:var(--glow-cyan);
+}
+.id-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:0.5rem 0; border-bottom:1px solid rgba(0,245,255,0.06);
+  font-family:'Share Tech Mono',monospace; font-size:0.68rem;
+}
+.id-row-label { color:var(--muted); }
+.id-row-val { color:var(--cyan); }
+.id-barcode { margin-top:1.2rem; display:flex; gap:2px; height:24px; align-items:flex-end; }
+.bar { background:var(--cyan); opacity:0.5; border-radius:1px; animation:bar-flicker 3s ease-in-out infinite; }
+@keyframes bar-flicker { 0%,100%{opacity:0.4;} 50%{opacity:0.8;} }
+
+/* SECTION BASE */
+.section {
+  position:relative; z-index:1;
+  padding:6rem 3rem;
+  max-width:1300px; margin:0 auto;
+}
+.sec-header {
+  display:flex; align-items:center; gap:1.5rem; margin-bottom:3.5rem;
+}
+.sec-num {
+  font-family:'Orbitron',monospace; font-size:3.5rem; font-weight:900;
+  color:rgba(0,245,255,0.06); line-height:1; user-select:none;
+}
+.sec-label {
+  font-family:'Share Tech Mono',monospace; font-size:0.65rem;
+  color:var(--cyan); letter-spacing:0.25em; text-transform:uppercase;
+  margin-bottom:0.2rem; text-shadow:var(--glow-cyan);
+}
+.sec-title {
+  font-family:'Orbitron',monospace; font-size:clamp(1.5rem,3vw,2.2rem);
+  font-weight:700; color:var(--white); letter-spacing:0.05em;
+}
+.sec-line { flex:1; height:1px; background:linear-gradient(90deg,var(--border-hot),transparent); }
+
+/* OBJECTIVE */
+.obj-card {
+  background:var(--card); border:1px solid var(--border); padding:2.5rem;
+  position:relative; max-width:900px;
+  clip-path:polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,24px 100%,0 calc(100% - 24px));
+}
+.obj-card::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg,rgba(0,245,255,0.04),transparent 60%);
+  pointer-events:none;
+}
+.obj-card p {
+  font-size:1.08rem; line-height:1.85; color:rgba(232,244,255,0.75);
+  font-weight:300;
+}
+.obj-card p strong { color:var(--cyan); font-weight:600; }
+
+/* SKILLS */
+.skills-layout { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+.skill-panel {
+  background:var(--card); border:1px solid var(--border); padding:2rem;
+  clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
+}
+.skill-panel-title {
+  font-family:'Share Tech Mono',monospace; font-size:0.68rem;
+  color:var(--pink); letter-spacing:0.2em; margin-bottom:1.5rem;
+}
+.skill-bar-item { margin-bottom:1.2rem; }
+.skill-bar-header {
+  display:flex; justify-content:space-between;
+  font-family:'Share Tech Mono',monospace; font-size:0.72rem;
+  color:var(--white); margin-bottom:0.4rem;
+}
+.skill-bar-pct { color:var(--cyan); }
+.skill-bar-track { height:3px; background:rgba(0,245,255,0.1); border-radius:2px; }
+.skill-bar-fill {
+  height:100%; background:linear-gradient(90deg,var(--cyan),var(--pink));
+  border-radius:2px; width:0;
+  animation:bar-grow 1.2s cubic-bezier(0.4,0,0.2,1) forwards;
+  box-shadow:0 0 8px rgba(0,245,255,0.5);
+}
+@keyframes bar-grow { to { width:var(--target-w); } }
+.skill-tags-grid { display:flex; flex-wrap:wrap; gap:0.5rem; }
+.stag {
+  font-family:'Share Tech Mono',monospace; font-size:0.65rem;
+  border:1px solid var(--border); color:var(--muted);
+  padding:0.3rem 0.7rem; letter-spacing:0.1em; transition:all 0.2s;
+}
+.stag:hover { border-color:var(--cyan); color:var(--cyan); box-shadow:var(--glow-cyan); }
+
+/* EXPERIENCE */
+.exp-timeline { position:relative; padding-left:2rem; }
+.exp-timeline::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:1px; background:linear-gradient(180deg,var(--cyan),var(--pink),transparent);
+}
+.exp-item {
+  display:grid; grid-template-columns:120px 1fr;
+  gap:2rem; margin-bottom:3rem; position:relative;
+}
+.exp-item::before {
+  content:''; position:absolute; left:-2rem; top:6px;
+  width:8px; height:8px; border-radius:50%;
+  background:var(--cyan); box-shadow:var(--glow-cyan);
+  transform:translateX(-3px);
+}
+.exp-date {
+  font-family:'Share Tech Mono',monospace; font-size:0.68rem;
+  color:var(--cyan); text-align:right; padding-top:4px; line-height:1.6;
+}
+.exp-content { border-left:1px solid var(--border); padding-left:1.5rem; }
+.exp-role {
+  font-family:'Orbitron',monospace; font-size:1rem; font-weight:700;
+  color:var(--white); letter-spacing:0.05em; margin-bottom:0.3rem;
+}
+.exp-company {
+  font-family:'Share Tech Mono',monospace; font-size:0.72rem;
+  color:var(--pink); letter-spacing:0.1em; margin-bottom:0.7rem;
+}
+.exp-desc { font-size:0.95rem; color:rgba(232,244,255,0.6); line-height:1.7; font-weight:300; }
+.exp-badge {
+  display:inline-block; margin-top:0.6rem;
+  font-family:'Share Tech Mono',monospace; font-size:0.6rem;
+  padding:0.2rem 0.6rem; border:1px solid var(--green); color:var(--green);
+  letter-spacing:0.15em; text-transform:uppercase;
+}
+
+/* EDUCATION */
+.edu-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
+.edu-c {
+  background:var(--card); border:1px solid var(--border); padding:2rem;
+  position:relative; transition:border-color 0.2s;
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);
+}
+.edu-c:hover { border-color:var(--border-hot); }
+.edu-deg {
+  font-family:'Orbitron',monospace; font-size:0.9rem; font-weight:700;
+  color:var(--white); margin-bottom:0.7rem; letter-spacing:0.03em;
+}
+.edu-school-name { font-size:0.85rem; color:rgba(232,244,255,0.5); margin-bottom:1rem; font-weight:300; }
+.edu-score-badge {
+  font-family:'Share Tech Mono',monospace; font-size:0.72rem;
+  color:var(--cyan); border:1px solid var(--border); display:inline-block;
+  padding:0.25rem 0.75rem;
+}
+
+/* PROJECTS */
+.projects-featured { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem; }
+.projects-small { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
+.proj-card {
+  background:var(--card); border:1px solid var(--border);
+  padding:1.8rem; position:relative; transition:all 0.25s;
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);
+}
+.proj-card:hover {
+  border-color:var(--border-hot);
+  background:rgba(0,245,255,0.05);
+  transform:translateY(-4px);
+  box-shadow:0 16px 40px rgba(0,245,255,0.08);
+}
+.proj-card.featured {
+  clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,0 100%);
+}
+.proj-corner {
+  position:absolute; top:1rem; right:1.5rem;
+  font-family:'Share Tech Mono',monospace; font-size:0.58rem;
+  color:var(--yellow); letter-spacing:0.15em;
+  border:1px solid rgba(255,230,0,0.3); padding:0.15rem 0.5rem;
+}
+.proj-idx {
+  font-family:'Orbitron',monospace; font-size:0.65rem;
+  color:rgba(0,245,255,0.3); margin-bottom:0.8rem;
+}
+.proj-title {
+  font-family:'Orbitron',monospace; font-size:1.1rem; font-weight:700;
+  color:var(--white); margin-bottom:0.8rem; letter-spacing:0.03em;
+}
+.proj-title.sm { font-size:0.95rem; }
+.proj-desc { font-size:0.9rem; color:rgba(232,244,255,0.55); line-height:1.65; margin-bottom:1.2rem; font-weight:300; }
+.proj-desc.sm { font-size:0.85rem; }
+.proj-tags { display:flex; flex-wrap:wrap; gap:0.5rem; }
+.ptag {
+  font-family:'Share Tech Mono',monospace; font-size:0.6rem;
+  padding:0.2rem 0.6rem; letter-spacing:0.1em;
+}
+.ptag-cyan { border:1px solid rgba(0,245,255,0.3); color:var(--cyan); }
+.ptag-pink { border:1px solid rgba(255,0,102,0.3); color:var(--pink); }
+.ptag-green { border:1px solid rgba(0,255,136,0.3); color:var(--green); }
+.ptag-yellow { border:1px solid rgba(255,230,0,0.3); color:var(--yellow); }
+
+/* CERTIFICATIONS */
+.cert-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+.cert-card {
+  background:var(--card); border:1px solid var(--border);
+  padding:1.4rem; display:flex; gap:1rem; align-items:flex-start;
+  transition:border-color 0.2s;
+}
+.cert-card:hover { border-color:var(--border-hot); }
+.cert-badge { font-size:1.4rem; flex-shrink:0; }
+.cert-text { font-size:0.88rem; color:rgba(232,244,255,0.65); line-height:1.6; }
+.cert-text strong { color:var(--white); display:block; margin-bottom:0.2rem; }
+
+/* CONTACT */
+#contact-section {
+  position:relative; z-index:1;
+  text-align:center; padding:6rem 3rem 4rem;
+  border-top:1px solid var(--border);
+  background:linear-gradient(180deg,transparent,rgba(0,245,255,0.02));
+}
+.contact-headline {
+  font-family:'Orbitron',monospace; font-size:clamp(2.5rem,6vw,5rem);
+  font-weight:900; color:var(--white); letter-spacing:0.05em; margin-bottom:1rem;
+}
+.contact-headline span { color:var(--cyan); text-shadow:var(--glow-cyan); }
+.contact-sub {
+  font-family:'Share Tech Mono',monospace; font-size:0.75rem;
+  color:var(--muted); letter-spacing:0.2em; margin-bottom:3rem;
+}
+.contact-box { display:flex; flex-direction:column; align-items:center; gap:1.5rem; }
+.contact-email-link {
+  font-family:'Share Tech Mono',monospace; font-size:1.1rem;
+  color:var(--cyan); text-decoration:none; letter-spacing:0.1em;
+  text-shadow:var(--glow-cyan); transition:opacity 0.2s;
+}
+.contact-email-link:hover { opacity:0.7; }
+.contact-row { display:flex; gap:1.5rem; flex-wrap:wrap; justify-content:center; }
+.contact-link {
+  font-family:'Share Tech Mono',monospace; font-size:0.75rem;
+  color:var(--muted); text-decoration:none; letter-spacing:0.15em;
+  border:1px solid var(--border); padding:0.6rem 1.2rem;
+  transition:all 0.2s; text-transform:uppercase;
+}
+.contact-link:hover { border-color:var(--cyan); color:var(--cyan); box-shadow:var(--glow-cyan); }
+
+footer {
+  text-align:center; padding:1.5rem;
+  font-family:'Share Tech Mono',monospace; font-size:0.6rem;
+  color:var(--muted); letter-spacing:0.2em;
+  border-top:1px solid rgba(0,245,255,0.06); position:relative; z-index:1;
+}
+
+@keyframes fadeIn { to { opacity:1; } }
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav { padding:0.8rem 1.5rem; }
+  .nav-links { display:none; }
+  .hero-grid { grid-template-columns:1fr; gap:2rem; }
+  .hero-id-card,.hero-stats-col { display:none; }
+  .section { padding:4rem 1.5rem; }
+  .skills-layout,.edu-cards,.projects-featured,.projects-small,.cert-grid { grid-template-columns:1fr; }
+  .exp-item { grid-template-columns:80px 1fr; gap:1rem; }
+}
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<canvas id="bg-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">SNEHA<span>.</span>SURESH</div>
+  <ul class="nav-links">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#obj-section">About</a></li>
+    <li><a href="#skills-section">Skills</a></li>
+    <li><a href="#exp-section">Experience</a></li>
+    <li><a href="#edu-section">Education</a></li>
+    <li><a href="#projects-section">Projects</a></li>
+    <li><a href="#cert-section">Certs</a></li>
+    <li><a href="#contact-section">Contact</a></li>
+  </ul>
+  <div class="nav-status"><div class="status-dot"></div>OPEN TO WORK</div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid">
+    <div class="hero-left">
+      <div class="hero-sys-text" id="hero-sys">initializing profile...</div>
+      <h1 class="glitch-name" data-text="SNEHA SURESH">SNEHA SURESH</h1>
+      <div class="hero-sub">Python Full Stack Developer · Django + React</div>
+      <p class="hero-desc">
+        Building scalable web applications with <strong style="color:var(--cyan)">Python, Django & React</strong>. 
+        Currently at <strong style="color:var(--pink)">Inventura Tech</strong>, crafting production-grade full-stack solutions with clean REST APIs and responsive interfaces.
+      </p>
+      <div class="hero-btns">
+        <a href="#projects-section" class="btn-cyber btn-cyber-primary">View Projects</a>
+        <a href="#contact-section" class="btn-cyber btn-cyber-ghost">Contact Me</a>
+      </div>
+    </div>
+    <div class="hero-id-card">
+      <div class="id-header">// DEVELOPER ID — 2026</div>
+      <div class="id-avatar">SS</div>
+      <div class="id-row"><span class="id-row-label">STATUS</span><span class="id-row-val">ACTIVE</span></div>
+      <div class="id-row"><span class="id-row-label">ROLE</span><span class="id-row-val">FULLSTACK</span></div>
+      <div class="id-row"><span class="id-row-label">STACK</span><span class="id-row-val">DJANGO+REACT</span></div>
+      <div class="id-row"><span class="id-row-label">COMPANY</span><span class="id-row-val">INVENTURA TECH</span></div>
+      <div class="id-row"><span class="id-row-label">LOCATION</span><span class="id-row-val">KOLLAM, IN</span></div>
+      <div class="id-row"><span class="id-row-label">CGPA</span><span class="id-row-val">8.08</span></div>
+      <div class="id-row"><span class="id-row-label">PROJECTS</span><span class="id-row-val">9+</span></div>
+      <div class="id-barcode" id="barcode"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 01 · CAREER OBJECTIVE -->
+<section class="section" id="obj-section">
+  <div class="sec-header">
+    <div class="sec-num">01</div>
+    <div class="sec-title-wrap">
+      <div class="sec-label">// CAREER OBJECTIVE</div>
+      <div class="sec-title">ABOUT ME</div>
+    </div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="obj-card">
+    <p>
+      <strong>Python Developer</strong> with hands-on experience in full-stack development using 
+      <strong>Python (Django)</strong> and <strong>React.js</strong>. Currently working at 
+      <strong>Inventura Tech</strong> (since July 2025) and seeking new opportunities to contribute to 
+      innovative projects, build scalable web applications, and further enhance my development skills.
+    </p>
+  </div>
+</section>
+
+<!-- 02 · SKILLS -->
+<section class="section" id="skills-section">
+  <div class="sec-header">
+    <div class="sec-num">02</div>
+    <div class="sec-title-wrap">
+      <div class="sec-label">// TECHNICAL SKILLS</div>
+      <div class="sec-title">TECH ARSENAL</div>
+    </div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="skills-layout">
+    <div class="skill-panel">
+      <div class="skill-panel-title">// CORE PROFICIENCY</div>
+      <div class="skill-bar-item">
+        <div class="skill-bar-header"><span>Python / Django (MVT, REST APIs)</span><span class="skill-bar-pct">90%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="--target-w:90%"></div></div>
+      </div>
+      <div class="skill-bar-item">
+        <div class="skill-bar-header"><span>React.js (Redux, Hooks, npm)</span><span class="skill-bar-pct">82%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="--target-w:82%;animation-delay:0.1s"></div></div>
+      </div>
+      <div class="skill-bar-item">
+        <div class="skill-bar-header"><span>HTML / CSS / Bootstrap 4</span><span class="skill-bar-pct">85%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="--target-w:85%;animation-delay:0.2s"></div></div>
+      </div>
+      <div class="skill-bar-item">
+        <div class="skill-bar-header"><span>MySQL / SQLite</span><span class="skill-bar-pct">80%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="--target-w:80%;animation-delay:0.3s"></div></div>
+      </div>
+      <div class="skill-bar-item">
+        <div class="skill-bar-header"><span>JavaScript</span><span class="skill-bar-pct">78%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="--target-w:78%;animation-delay:0.4s"></div></div>
+      </div>
+      <div class="skill-bar-item">
+        <div class="skill-bar-header"><span>Git / GitHub</span><span class="skill-bar-pct">80%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="--target-w:80%;animation-delay:0.5s"></div></div>
+      </div>
+    </div>
+    <div class="skill-panel">
+      <div class="skill-panel-title">// TOOLS & OTHER</div>
+      <div class="skill-tags-grid">
+        <span class="stag">JavaScript</span>
+        <span class="stag">npm</span>
+        <span class="stag">Redux</span>
+        <span class="stag">Postman</span>
+        <span class="stag">VS Code</span>
+        <span class="stag">Sublime Text</span>
+        <span class="stag">PHPMyAdmin</span>
+        <span class="stag">GitHub Desktop</span>
+        <span class="stag">CloudPanel</span>
+        <span class="stag">Hostinger</span>
+        <span class="stag">Ubuntu</span>
+        <span class="stag">Windows</span>
+        <span class="stag">OOP</span>
+        <span class="stag">MVT Pattern</span>
+        <span class="stag">Responsive Design</span>
+        <span class="stag">Java (Basics)</span>
+        <span class="stag">MS Office</span>
+      </div>
+      <div style="margin-top:1.5rem">
+        <div class="skill-panel-title">// SOFT SKILLS</div>
+        <div class="skill-tags-grid" style="margin-top:0.8rem">
+          <span class="stag">Leadership</span>
+          <span class="stag">Teamwork</span>
+          <span class="stag">Problem Solving</span>
+          <span class="stag">Communication</span>
+          <span class="stag">Debugging</span>
+          <span class="stag">Decision Making</span>
+          <span class="stag">Interpersonal</span>
+          <span class="stag">Patience</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · EXPERIENCE -->
+<section class="section" id="exp-section">
+  <div class="sec-header">
+    <div class="sec-num">03</div>
+    <div class="sec-title-wrap">
+      <div class="sec-label">// INTERNSHIPS & EXPERIENCE</div>
+      <div class="sec-title">WORK HISTORY</div>
+    </div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="exp-timeline">
+
+    <div class="exp-item">
+      <div class="exp-date">JUL 2025<br>PRESENT</div>
+      <div class="exp-content">
+        <div class="exp-role">Python Developer</div>
+        <div class="exp-company">⚡ INVENTURA TECH — INDIA</div>
+        <p class="exp-desc">Working on full-stack web development projects using Python, Django, and React. Building scalable, maintainable web applications for production.</p>
+        <span class="exp-badge">CURRENT ROLE</span>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-date">MAY 2025</div>
+      <div class="exp-content">
+        <div class="exp-role">Python Programming Intern</div>
+        <div class="exp-company">⚡ CODSOFT</div>
+        <p class="exp-desc">Completed a hands-on Python programming internship, building real-world projects and strengthening core programming fundamentals. Certified May 3, 2025.</p>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-date">2024–25</div>
+      <div class="exp-content">
+        <div class="exp-role">Full Stack Python + React Intern</div>
+        <div class="exp-company">⚡ MASHUPSTACK</div>
+        <p class="exp-desc">Full-stack development using Django and React. Built end-to-end web applications with REST APIs, role-based access control, and responsive UI. Certified on completion.</p>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-date">EARLIER</div>
+      <div class="exp-content">
+        <div class="exp-role">IoT Intern</div>
+        <div class="exp-company">⚡ QNAYDS LLP</div>
+        <p class="exp-desc">Completed an internship on Internet of Things — worked with embedded systems, sensors, and connected hardware prototypes.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- 04 · EDUCATION -->
+<section class="section" id="edu-section">
+  <div class="sec-header">
+    <div class="sec-num">04</div>
+    <div class="sec-title-wrap">
+      <div class="sec-label">// EDUCATION</div>
+      <div class="sec-title">ACADEMIC LOG</div>
+    </div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="edu-cards">
+    <div class="edu-c">
+      <div class="edu-deg">B.Tech — Information Technology</div>
+      <div class="edu-school-name">University College of Engineering, Kariavattom, Thiruvananthapuram · 2020–2024</div>
+      <div class="edu-score-badge">CGPA: 8.08</div>
+    </div>
+    <div class="edu-c">
+      <div class="edu-deg">Higher Secondary (+2)</div>
+      <div class="edu-school-name">MKLMHSS, Kannanalloor, Kollam · 2018–2020</div>
+      <div class="edu-score-badge">95.1%</div>
+    </div>
+    <div class="edu-c">
+      <div class="edu-deg">SSLC — Class 10</div>
+      <div class="edu-school-name">ST. Jude H.S.S, Mukhathala, Kollam · 2018</div>
+      <div class="edu-score-badge">95%</div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · PROJECTS -->
+<section class="section" id="projects-section">
+  <div class="sec-header">
+    <div class="sec-num">05</div>
+    <div class="sec-title-wrap">
+      <div class="sec-label">// PROJECTS</div>
+      <div class="sec-title">THINGS I'VE BUILT</div>
+    </div>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="projects-featured">
+    <div class="proj-card featured">
+      <div class="proj-corner">FEATURED</div>
+      <div class="proj-idx">01</div>
+      <div class="proj-title">Restaurant Expense & Sales Manager</div>
+      <p class="proj-desc">Web-based Sales and Expense Tracker to manage daily financial operations — sales, expenses, cash flow, staff management, and reporting with secure role-based access.</p>
+      <div class="proj-tags">
+        <span class="ptag ptag-cyan">Django</span>
+        <span class="ptag ptag-yellow">MySQL</span>
+        <span class="ptag ptag-pink">JavaScript</span>
+        <span class="ptag ptag-green">RBAC</span>
+      </div>
+    </div>
+    <div class="proj-card featured">
+      <div class="proj-corner">FEATURED</div>
+      <div class="proj-idx">02</div>
+      <div class="proj-title">Saloon Management System</div>
+      <p class="proj-desc">Full-stack salon app with secure user authentication, barber selection, service booking, customer reviews, and a loyalty/rewards system with interactive frontend design.</p>
+      <div class="proj-tags">
+        <span class="ptag ptag-cyan">Python</span>
+        <span class="ptag ptag-yellow">MySQL</span>
+        <span class="ptag ptag-pink">HTML/CSS</span>
+        <span class="ptag ptag-green">JavaScript</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="projects-small">
+    <div class="proj-card">
+      <div class="proj-idx">03</div>
+      <div class="proj-title sm">Purchase Module</div>
+      <p class="proj-desc sm">Django + React purchase module integrating REST APIs for vendor management, purchase orders, and invoice workflows.</p>
+      <div class="proj-tags">
+        <span class="ptag ptag-cyan">Django</span>
+        <span class="ptag ptag-pink">React</span>
+        <span class="ptag ptag-green">REST API</span>
+      </div>
+    </div>
+    <div class="proj-card">
+      <div class="proj-idx">04</div>
+      <div class="proj-title sm">Accounting Software</div>
+      <p class="proj-desc sm">Enterprise accounting platform — invoicing, payroll, tax, financial reporting, expense tracking, audit trails, and multi-currency support.</p>
+      <div class="proj-tags">
+        <span class="ptag ptag-cyan">Python</span>
+        <span class="ptag ptag-pink">Django</span>
+        <span class="ptag ptag-yellow">RBAC</span>
+      </div>
+    </div>
+    <div class="proj-card">
+      <div class="proj-idx">05</div>
+      <div class="proj-title sm">OTT Streaming Platform</div>
+      <p class="proj-desc sm">Full-stack streaming platform with user auth, movie management, watchlists, viewing history, and role-based admin controls.</p>
+      <div class="proj-tags">
+        <span class="ptag ptag-cyan">Django</span>
+        <span class="ptag ptag-pink">React</span>
+        <span class="ptag ptag-green">REST API</span>
+      </div>
+    </div>
+    <div class="proj-card">
+      <div class="proj-idx">06</div>
+      <div class="proj-title sm">URL Shortener App</div>
+      <p class="proj-desc sm">Full-stack URL shortener with user authentication, URL limits, CRUD, search, and pagination using React frontend.</p>
+      <div class="proj-tags">
+        <span class="ptag ptag-pink">React</span>
+        <span class="ptag ptag-cyan">Django</span>
+        <span class="ptag ptag-green">REST API</span>
+      </div>
+    </div>
+    <div class="proj-card">
+      <div class="proj-idx">07</div>
+      <div class="proj-title sm">Accident Detection System</div>
+      <p class="proj-desc sm">Surveillance-based accident detection system that sends real-time email alerts to authorities using Python.</p>
+      <div class="proj-tags">
+        <span class="ptag ptag-cyan">Python</span>
+        <span class="ptag ptag-yellow">SMTP Alerts</span>
+      </div>
+    </div>
+    <div class="proj-card">
+      <div class="proj-idx">08</div>
+      <div class="proj-title sm">Python & Django App Suite</div>
+      <p class="proj-desc sm">Multiple apps: Django Water Intake Tracker, Contact Management System (full CRUD), and core Python programs demonstrating OOP, data structures & logic.</p>
+      <div class="proj-tags">
+        <span class="ptag ptag-cyan">Python</span>
+        <span class="ptag ptag-pink">Django</span>
+        <span class="ptag ptag-green">OOP</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MINIPROJECT -->
+  <div style="margin-top:1.5rem">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--muted);letter-spacing:0.2em;margin-bottom:1rem;">// MINIPROJECT</div>
+    <div class="proj-card" style="max-width:420px">
+      <div class="proj-idx">MP</div>
+      <div class="proj-title sm">Smart Waste Management System</div>
+      <p class="proj-desc sm">Arduino-based embedded system using HC-SR04 ultrasonic sensor and GSM module for real-time bin monitoring and efficient waste collection alerts.</p>
+      <div class="proj-tags">
+        <span class="ptag ptag-green">Arduino</span>
+        <span class="ptag ptag-cyan">HC-SR04</span>
+        <span class="ptag ptag-pink">GSM</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · CERTIFICATIONS -->
+<section class="section" id="cert-section">
+  <div class="sec-header">
+    <div class="sec-num">06</div>
+    <div class="sec-title-wrap">
+      <div class="sec-label">// CERTIFICATIONS</div>
+      <div class="sec-title">CREDENTIALS</div>
+    </div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="cert-grid">
+    <div class="cert-card">
+      <div class="cert-badge">🐍</div>
+      <div class="cert-text"><strong>Python Programming Internship</strong>CodSoft — May 3, 2025</div>
+    </div>
+    <div class="cert-card">
+      <div class="cert-badge">⚛️</div>
+      <div class="cert-text"><strong>Full Stack Web Dev (Python + React)</strong>MashupStack</div>
+    </div>
+    <div class="cert-card">
+      <div class="cert-badge">📡</div>
+      <div class="cert-text"><strong>Webinar on Emerging Technologies</strong>IEEE UCEK — May 1, 2021</div>
+    </div>
+    <div class="cert-card">
+      <div class="cert-badge">💡</div>
+      <div class="cert-text"><strong>Tech Webinar</strong>IEDC UCE — June 19, 2021</div>
+    </div>
+    <div class="cert-card">
+      <div class="cert-badge">🎒</div>
+      <div class="cert-text"><strong>Backpack to Hackathon</strong>Workspace — August 1, 2021</div>
+    </div>
+    <div class="cert-card">
+      <div class="cert-badge">🚀</div>
+      <div class="cert-text"><strong>INSPIRON — Python & Digital Marketing</strong>Team INSPIRE & Srishti Campus — May 3, 2024</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact-section">
+  <h2 class="contact-headline">LET'S <span>CONNECT</span></h2>
+  <p class="contact-sub">// OPEN TO FULL-TIME ROLES · FREELANCE · COLLABORATIONS</p>
+  <div class="contact-box">
+    <a href="mailto:snehasuresh98723@gmail.com" class="contact-email-link">snehasuresh98723@gmail.com</a>
+    <div class="contact-row">
+      <a href="https://linkedin.com/in/sneha-suresh-a30956276" target="_blank" class="contact-link">🔗 LinkedIn</a>
+      <a href="https://github.com/SNEHASURESH003" target="_blank" class="contact-link">🐙 GitHub</a>
+      <a href="tel:+918590952598" class="contact-link">📞 +91 85909 52598</a>
+    </div>
+  </div>
+</section>
+
+<footer>// SNEHA SURESH · KOLLAM, KERALA, INDIA · PYTHON FULL STACK DEVELOPER · 2026 //</footer>
+
+<script>
+// CUSTOM CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+animRing();
+document.querySelectorAll('a,.proj-card,.btn-cyber').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.width='60px';ring.style.height='60px';ring.style.borderColor='rgba(0,245,255,0.7)';});
+  el.addEventListener('mouseleave',()=>{ring.style.width='36px';ring.style.height='36px';ring.style.borderColor='rgba(0,245,255,0.4)';});
+});
+
+// CANVAS BACKGROUND
+const canvas=document.getElementById('bg-canvas');
+const ctx=canvas.getContext('2d');
+let W,H,particles=[],lines=[];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+function hexParticle(){return{x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,size:Math.random()*2+1,opacity:Math.random()*0.5+0.1,color:Math.random()>0.6?'#00f5ff':Math.random()>0.5?'#ff0066':'#00ff88'};}
+for(let i=0;i<90;i++)particles.push(hexParticle());
+for(let i=0;i<8;i++)lines.push({x1:Math.random()*W,y1:0,x2:Math.random()*W,y2:H,opacity:Math.random()*0.04+0.01,color:Math.random()>0.5?'#00f5ff':'#ff0066'});
+let frame=0;
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  lines.forEach(l=>{ctx.beginPath();ctx.moveTo(l.x1,l.y1);ctx.lineTo(l.x2,l.y2);ctx.strokeStyle=l.color;ctx.globalAlpha=l.opacity;ctx.lineWidth=1;ctx.stroke();});
+  ctx.globalAlpha=1;
+  for(let i=0;i<particles.length;i++){for(let j=i+1;j<particles.length;j++){const dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<140){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle='rgba(0,245,255,'+(0.06*(1-dist/140))+')';ctx.lineWidth=0.5;ctx.stroke();}}}
+  particles.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fillStyle=p.color;ctx.globalAlpha=p.opacity;ctx.fill();p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;});
+  ctx.globalAlpha=0.03;ctx.fillStyle='#00f5ff';ctx.fillRect(0,(frame*1.5)%H,W,2);
+  ctx.globalAlpha=1;frame++;requestAnimationFrame(draw);
+}
+draw();
+
+// BARCODE
+const bc=document.getElementById('barcode');
+if(bc){for(let i=0;i<40;i++){const b=document.createElement('div');b.className='bar';const h=Math.random()*16+8;b.style.cssText=`width:${Math.random()>0.5?2:1}px;height:${h}px;animation-delay:${Math.random()*3}s`;bc.appendChild(b);}}
+
+// TYPING EFFECT
+const phrases=['initializing profile...','loading stack: django + react...','status: open to opportunities...','location: kollam, kerala, india...'];
+let pi=0,ci=0,del=false;
+const sysEl=document.getElementById('hero-sys');
+function type(){
+  if(!sysEl)return;
+  const cur=phrases[pi];
+  if(!del){sysEl.textContent=cur.slice(0,++ci);if(ci>=cur.length){del=true;setTimeout(type,1800);return;}}
+  else{sysEl.textContent=cur.slice(0,--ci);if(ci<=0){del=false;pi=(pi+1)%phrases.length;}}
+  setTimeout(type,del?35:55);
+}
+setTimeout(type,800);
+</script>
+</body>
+</html>
